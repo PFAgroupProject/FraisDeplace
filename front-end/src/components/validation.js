@@ -12,6 +12,9 @@ errors.email = "Email Required"
             }
             return errors;
  }   
+  
+
+ 
      export default validation ;     
             
-    
+

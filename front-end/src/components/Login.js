@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Paper, Box, TextField, Button } from '@mui/material';
 import validation from './validation';
+import { useNavigate } from 'react-router-dom';  
 
 export default function BasicTextFields() {
   const [values, setValues] = useState({
@@ -9,6 +10,10 @@ export default function BasicTextFields() {
   });
 
   const [errors, setErrors] = useState({});
+  // eslint-disable-next-line
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const navigate = useNavigate();  
 
   function handleChange(e) {
     const { id, value } = e.target;
@@ -20,7 +25,47 @@ export default function BasicTextFields() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    setErrors(validation(values));
+    const validationErrors = validation(values);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length === 0) {
+      handleLogin();
+    }
+  }
+
+  function handleLogin() {
+    fetch('http://localhost:8083/Users/User', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: values.email, 
+            password: values.password 
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.text(); 
+        } else {
+            throw new Error('Login failed');
+        }
+    })
+    .then(data => {
+        console.log('Réponse API:', data); 
+        if (data.includes("new User was added")) { 
+            navigate('/fonc', { replace: true }); 
+        } else {
+            throw new Error('Identifiants incorrects ou problème de connexion');
+        }
+    })
+    .catch(error => {
+        console.error('Erreur lors de la connexion:', error);
+    });
+  }
+
+  function handleAdminClick() {
+    // Naviguer vers la page 'mang'
+    navigate('/mang');
   }
 
   return (
@@ -40,11 +85,14 @@ export default function BasicTextFields() {
           autoComplete="off"
           onSubmit={handleSubmit}
         >
-          <TextField id="email" label="email" value={values.email} variant="outlined" onChange={handleChange} />
+          <TextField id="email" label="Email" value={values.email} variant="outlined" onChange={handleChange} />
           {errors.email && <p style={{ color: "red", fontSize: "15px" }}>{errors.email}</p>}
-          <TextField id="password" label="password" value={values.password} variant="outlined" type="password" onChange={handleChange} />
+          <TextField id="password" label="Password" value={values.password} variant="outlined" type="password" onChange={handleChange} />
           {errors.password && <p style={{ color: "red", fontSize: "15px" }}>{errors.password}</p>}
+          {errorMessage && <p style={{ color: "red", fontSize: "15px" }}>{errorMessage}</p>}
           <Button variant="contained" type="submit">Sign In</Button>
+          <br />
+          <Button variant="contained" onClick={handleAdminClick}>Admin</Button>
         </Box>
       </Paper>
     </Container>
