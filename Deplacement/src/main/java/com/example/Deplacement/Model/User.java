@@ -7,26 +7,34 @@ import jakarta.persistence.Id;
 
 @Entity
 public class User {
-    private String name ;
-    private String Lastname ;
-    private String Password ;
-    private String Email ;
-    private String Role ;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public User(String name, String lastname, String password, String email, String role) {
-        super();
-        this.name = name;
-        Lastname = lastname;
-        Password = password;
-        Email = email;
-        Role = role;
-    }
+    private String name;
+    private String lastname;
+    private String password;
+    private String email;
+    private String role;
 
     public User() {
+    }
 
+    public User(String name, String lastname, String password, String email, String role) {
+        this.name = name;
+        this.lastname = lastname;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -38,48 +46,34 @@ public class User {
     }
 
     public String getLastname() {
-        return Lastname;
+        return lastname;
     }
 
     public void setLastname(String lastname) {
-        Lastname = lastname;
-    }
-
-
-
-    public void setId(long id) {
-        long Id = id;
+        this.lastname = lastname;
     }
 
     public String getPassword() {
-        return Password;
+        return password;
     }
 
     public void setPassword(String password) {
-        Password = password;
+        this.password = password;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
 
     public String getRole() {
-        return Role;
+        return role;
     }
 
     public void setRole(String role) {
-        Role = role;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
+        this.role = role;
     }
 }

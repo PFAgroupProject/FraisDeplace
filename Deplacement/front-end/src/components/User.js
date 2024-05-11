@@ -28,6 +28,9 @@ export default function User() {
             })
             .then(() => {
                 console.log("new user added");
+                localStorage.setItem('email', email);
+                localStorage.setItem('password', password);
+                localStorage.setItem('userInfoSaved', true);
                 navigate('/Login');
             })
             .catch(error => console.error("Error adding new user:", error));

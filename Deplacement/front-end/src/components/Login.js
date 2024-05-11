@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Container, Paper, Box, TextField, Button } from '@mui/material';
+import authService from './authService';
+import { useNavigate } from 'react-router-dom';
 import validation from './validation';
-import { useNavigate } from 'react-router-dom';  
 
 export default function BasicTextFields() {
   const [values, setValues] = useState({
@@ -10,10 +11,9 @@ export default function BasicTextFields() {
   });
 
   const [errors, setErrors] = useState({});
-  // eslint-disable-next-line
   const [errorMessage, setErrorMessage] = useState('');
 
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
 
   function handleChange(e) {
     const { id, value } = e.target;
@@ -32,39 +32,23 @@ export default function BasicTextFields() {
     }
   }
 
-  function handleLogin() {
-    fetch('http://localhost:8083/Users/User', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            email: values.email, 
-            password: values.password 
-        })
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.text(); 
-        } else {
-            throw new Error('Login failed');
-        }
-    })
-    .then(data => {
-        console.log('Réponse API:', data); 
-        if (data.includes("new User was added")) { 
-            navigate('/fonc', { replace: true }); 
-        } else {
-            throw new Error('Identifiants incorrects ou problème de connexion');
-        }
-    })
-    .catch(error => {
-        console.error('Erreur lors de la connexion:', error);
-    });
+  async function handleLogin() {
+    try {
+      const response = await authService.login({
+        email: values.email,
+        password: values.password
+      });
+      setErrorMessage(response.data);
+      console.log(response.data);
+      if (response.data === "Login successful") {
+        navigate('/fonc', { replace: true });
+      }
+    } catch (error) {
+      setErrorMessage('Invalid credentials or connection issue');
+    }
   }
 
   function handleAdminClick() {
-    // Naviguer vers la page 'mang'
     navigate('/mang');
   }
 
